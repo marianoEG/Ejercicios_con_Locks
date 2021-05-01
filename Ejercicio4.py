@@ -3,7 +3,7 @@ import time
 import random
 import logging
 
-from ColaFIFO import ColaFIFO
+from ColaFIFOsize import ColaFIFOsize
 
 logging.basicConfig(format='%(asctime)s.%(msecs)03d [%(threadName)s] - %(message)s', datefmt='%H:%M:%S', level=logging.INFO)
 
@@ -35,20 +35,21 @@ class Consumidor(threading.Thread):
 
 
 def main():
-    # hilos = []
-    cola = ColaFIFO()
+    hilos = []
+    cola = ColaFIFOsize(10)
 
-    productor = Productor(cola, 2)
-    consumidor = Consumidor(cola, 1)
+    for i in range(5):
+        productor = Productor(cola, random.randint(1,5))
+        consumidor = Consumidor(cola, random.randint(1,5))
+        hilos.append(productor)
+        hilos.append(consumidor)
+        logging.info(f'Arrancando productor {productor.name}')
+        productor.start()
+        logging.info(f'Arrancando consumidor {consumidor.name}')
+        consumidor.start()
 
-    logging.info(f'Arrancando productor {productor.name}')
-    productor.start()
-
-    logging.info(f'Arrancando consumidor {consumidor.name}')
-    consumidor.start()
-
-    productor.join()
-    consumidor.join()
+    for thr in hilos:
+        thr.join()
 
 if __name__ == '__main__':
     main()
