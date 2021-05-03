@@ -35,21 +35,21 @@ class Consumidor(threading.Thread):
 
 
 def main():
-    # hilos = []
-    cola = ColaFIFOsize(2)
+    hilos = []
+    cola = ColaFIFOsize(10)
 
-    productor = Productor(cola, 2)
-    consumidor = Consumidor(cola, 1)
+    for i in range(5):
+        productor = Productor(cola, 1)
+        consumidor = Consumidor(cola, 1)
+        hilos.append(productor)
+        hilos.append(consumidor)
+        logging.info(f'Arrancando productor {productor.name}')
+        productor.start()
+        logging.info(f'Arrancando consumidor {consumidor.name}')
+        consumidor.start()
 
-    logging.info(f'Arrancando productor {productor.name}')
-    productor.start()
-
-    logging.info(f'Arrancando consumidor {consumidor.name}')
-    consumidor.start()
-
-    productor.join()
-    consumidor.join()
+    for thr in hilos:
+        thr.join()
 
 if __name__ == '__main__':
     main()
-
